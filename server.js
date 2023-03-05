@@ -5,9 +5,10 @@ var passport = require('passport');
 var crypto = require('crypto');
 var routes = require('./routes');
 const connection = require('./config/database');
+const bodyParser = require('body-parser'); 
 
 // Package documentation - https://www.npmjs.com/package/connect-mongo
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 
 // Need to require the entire Passport config module so app.js knows about it
 require('./config/passport');
@@ -31,7 +32,8 @@ app.use(express.urlencoded({extended: true}));
  * -------------- SESSION SETUP ----------------
  */
 
-const sessionStore = new MongoStore({ mongooseConnection: connection,
+const sessionStore = MongoStore.create({
+    mongoUrl: process.env.DB_STRING,
     collection: 'sessions'
 })
 

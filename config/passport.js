@@ -2,7 +2,10 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const connection = require('./database');
+const validPassword =  require('../lib/passwordUtils').validPassword
+
 const User = connection.models.User;
+
 
 const customFields = {
     usernameField: 'uname',
@@ -23,9 +26,9 @@ const verifyCallback = (username, password, cb) => {
     ).catch(err => cb(err))
 }
 
-const strategy = new LocalStrategy();
+const strategy = new LocalStrategy(customFields, verifyCallback);
 
-passport.use(strategy(customFields, verifyCallback));
+passport.use(strategy);
 
 passport.serializeUser((user, done) => done(null, user.id));
 
