@@ -2,6 +2,7 @@ const router = require('express').Router();
 const passport = require('passport');
 const genPassword = require('../lib/passwordUtils').genPassword;
 const connection = require('../config/database');
+const { isAdmin, isAuth } = require('./authMiddleware');
 const User = connection.models.User;
 
 /**
@@ -70,17 +71,23 @@ router.get('/register', (req, res, next) => {
  * 
  * Also, look up what behaviour express session has without a maxage set
  */
-router.get('/protected-route',  (req, res, next) => {
-
+router.get('/protected-route', isAuth, (req, res, next) => {
+    res.send("<h1>You are authenticated</h1><p><a href='/logout'>Logout </a></p>")
 });
 
-router.get('/admin-route',  (req, res, next) => {
+router.get('/admin-route',isAdmin, (req, res, next) => {
+    if(isAdmin)
+        next();
+    res.send("<h1>You are authenticated als Admin user</h1><p><a href='/logout'>logout</a>")
 });
 
 // Visiting this route logs the user out
 router.get('/logout', (req, res, next) => {
-    req.logout();
-    res.redirect('/protected-route');
+    req.logout( err => {
+        if (err)
+            return next(err)
+        res.redirect('/protected-route')
+    });
 });
 
 router.get('/login-success', (req, res, next) => {
