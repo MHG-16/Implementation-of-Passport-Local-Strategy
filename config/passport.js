@@ -10,7 +10,7 @@ const User = connection.models.User;
 const customFields = {
     usernameField: 'uname',
     passwordField: 'pw'
-}
+};
 
 const verifyCallback = (username, password, cb) => {
 
